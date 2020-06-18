@@ -7,25 +7,15 @@ void main() {
 }
 String appTitle = "Hunter.io";
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       title: appTitle,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blueGrey,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
+        primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: appTitle),
@@ -34,16 +24,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -52,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+  final _biggerFont = const TextStyle(fontSize: 18.0);
   AnimationController animationController;
   Animation degOneTranslationAnimation,mainButtonCliclTranslationAnimation;
 
@@ -92,8 +75,84 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       wordPair= WordPair.random();
     });
   }*/
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          /*final Iterable<ListTile> tiles = _saved.map(
+                (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final List<Widget> divided = ListTile
+              .divideTiles(
+            context: context,
+            tiles: tiles,
+          )
+              .toList();*/
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Options'),
+            ),
+            body:  Center(
+              child: ListView(/*children: divided*/
+                children: <Widget>[
+                  Padding(
+                    padding:  EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Container(
+                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade400))),
+                      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text("Night mode", style: _biggerFont,),
+                          Switch(
+                            value: false,
+                            onChanged: (bool state){
+
+                              print(state);
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+
+                    padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Your api key:", style: _biggerFont,),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                          width: 250,
+                          child: TextField(
+                            decoration: InputDecoration(
+
+                                hintText: 'Enter your Api key'
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  )
+                ],),
+            )
+            ,
+          );
+        },
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -101,7 +160,45 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: Center(
+        appBar: AppBar(
+          title: Text('Hunter.io'),
+          actions: <Widget>[      // Add 3 lines from here...
+            IconButton(icon: Icon(Icons.settings), onPressed: _pushSaved),
+
+          ],                      // ... to here.
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              DrawerHeader(
+                  decoration:BoxDecoration(
+                    gradient: LinearGradient(colors: <Color>[Colors.orangeAccent,Colors.deepOrange])
+                  )
+                  ,child: Center(
+                    child: Container(
+                      height: 120,
+                      width: 120,
+                      child: Material(
+
+                          elevation: 10,
+                          borderRadius: BorderRadius.all(Radius.circular(100.0)),
+
+                        child: Padding(
+
+                          padding: EdgeInsets.all(17.0),
+                          child: Image.asset("images/hunterio.png",height: 100,width: 100,),
+                        ),
+                         ),
+                    ),
+                  )),
+              customListTile(Icons.mail_outline,"Mails",Colors.blue),
+              customListTile(Icons.perm_identity,"Domains",Colors.green),
+              customListTile(Icons.verified_user,"Verified mails",Colors.orangeAccent)
+            ],
+          ),
+        ),
+
+        body: Center(
         child:RandomWords()
 
       ),
@@ -143,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     child: circularButton(
                       width: 50,
                       height: 50,
-                      icon: Icon(Icons.business,color: Colors.white),
+                      icon: Icon(Icons.verified_user,color: Colors.white),
                       color: Colors.orangeAccent,
                     ),
                   ),
@@ -156,7 +253,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         width: 60,
                         height: 60,
                         icon: Icon(Icons.list,color: Colors.white),
-                        color: Colors.red,
+                        color: Colors.deepPurple,
                       onClick: (){
                           if (animationController.isCompleted){
                             animationController.reverse();
@@ -178,4 +275,44 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+class customListTile extends StatelessWidget{
+  String text;
+  final iconColor;
+  final icon;
+
+  customListTile(this.icon,this.text,this.iconColor);
+  @override
+  Widget build(BuildContext context) {
+
+    return Padding(
+      padding: EdgeInsets.only(bottom:20.0 ),
+
+      child: Padding(
+        padding:  EdgeInsets.only(left: 20.0, right: 20.0),
+        child: Container(
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade400))),
+          child: InkWell(
+            splashColor: Colors.orangeAccent,
+            onTap: (){},
+            child: Container(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                   Icon(icon, color: iconColor,size: 30,),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(text, style: TextStyle(fontSize: 20.0 ),),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 }

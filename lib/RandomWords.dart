@@ -1,6 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 
 class randomWords extends StatelessWidget {
   // #docregion build
@@ -48,7 +50,7 @@ class RandomWordsState extends State<RandomWords> {
         pair.asPascalCase,
         style: _biggerFont,
       ),
-      leading: CircleAvatar(child: Text(pair.first[0]),)
+      leading: CircleAvatar(child: Text(pair.first[0].toUpperCase(),style: TextStyle(color: Colors.white),),backgroundColor: Colors.blueGrey,)
       ,
       trailing: Icon(
         alreadySaved ? Icons.star : Icons.star_border,
@@ -71,47 +73,11 @@ class RandomWordsState extends State<RandomWords> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Hunter.io'),
-        actions: <Widget>[      // Add 3 lines from here...
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-        ],                      // ... to here.
-      ),
+
       body: _buildSuggestions(),
     );
   }
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          final Iterable<ListTile> tiles = _saved.map(
-                (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final List<Widget> divided = ListTile
-              .divideTiles(
-            context: context,
-            tiles: tiles,
-          )
-              .toList();
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Saved mails'),
-            ),
-            body: ListView(children: divided)
-            ,
-          );
-        },
-      ),
-    );
-  }
 // #enddocregion RWS-build
 // #docregion RWS-var
 }
