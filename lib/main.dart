@@ -35,8 +35,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   final _biggerFont = const TextStyle(fontSize: 18.0);
-  AnimationController animationController;
-  Animation degOneTranslationAnimation,mainButtonCliclTranslationAnimation;
+  AnimationController animationController,animationControllerSmallerFab;
+  Animation degOneTranslationAnimation,mainButtonCliclTranslationAnimation,degOneTranslationAnimationScale,smallButtonCliclTranslationAnimation;
 
   double getRadians (double degree){
     return degree/57.295779513;
@@ -44,7 +44,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     @override
     void initState(){
     animationController= AnimationController(vsync:this,duration: Duration(milliseconds: 250));
-    degOneTranslationAnimation = Tween(begin: 0.0, end: 1.0).animate(animationController);
+    degOneTranslationAnimation = Tween(begin: 1.0, end: 0.0).animate(animationController);
+    degOneTranslationAnimationScale= Tween(begin: 0.0, end: 1.0).animate(animationController);
     mainButtonCliclTranslationAnimation= TweenSequence([
       TweenSequenceItem<double>(tween: Tween<double>(begin: 1.0, end: 0.6),weight: 50),
       TweenSequenceItem<double>(tween: Tween<double>(begin: 0.6, end: 1.0),weight: 50)
@@ -55,6 +56,20 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       });
     });
     super.initState();
+    }
+    @override
+    void initState2(){
+      animationControllerSmallerFab= AnimationController(vsync:this,duration: Duration(milliseconds: 250));
+      smallButtonCliclTranslationAnimation= TweenSequence([
+        TweenSequenceItem<double>(tween: Tween<double>(begin: 1.0, end: 0.6),weight: 50),
+        TweenSequenceItem<double>(tween: Tween<double>(begin: 0.6, end: 1.0),weight: 50)
+      ]).animate(animationControllerSmallerFab);
+      animationControllerSmallerFab.addListener(() {
+        setState(() {
+
+        });
+      });
+      super.initState();
     }
 
  /* int _counter = 0;
@@ -205,64 +220,117 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       floatingActionButton: Stack(
         children: <Widget>[
 
+
+
           Positioned(
+            height: 160,
+            width: 160,
+            bottom: 0,
+            right: 0,
+
             child: Stack(
-              children: <Widget>[
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadians(270),degOneTranslationAnimation.value * 100),
-                  child: Transform.scale(
-                    scale: degOneTranslationAnimation.value,
-                    child: circularButton(
-                      width: 50,
-                      height: 50,
-                      icon: Icon(Icons.mail,color: Colors.white),
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-                Transform.translate(
-                  offset: Offset.fromDirection(getRadians(225),degOneTranslationAnimation.value * 100),
-                  child: Transform.scale(
-                    scale: degOneTranslationAnimation.value,
-                    child: circularButton(
-                      width: 50,
-                      height: 50,
-                      icon: Icon(Icons.perm_identity,color: Colors.white),
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-            Transform.translate(
-              offset: Offset.fromDirection(getRadians(180),degOneTranslationAnimation.value * 100),
-
-              child: Transform.scale(
-                scale: degOneTranslationAnimation.value,
-                    child: circularButton(
-                      width: 50,
-                      height: 50,
-                      icon: Icon(Icons.verified_user,color: Colors.white),
-                      color: Colors.orangeAccent,
-                    ),
-                  ),
-                ),
-
-
-                   Transform.scale(
-                     scale: mainButtonCliclTranslationAnimation.value,
-                     child: circularButton(
-                        width: 60,
-                        height: 60,
-                        icon: Icon(Icons.list,color: Colors.white),
-                        color: Colors.deepPurple,
-                      onClick: (){
-                          if (animationController.isCompleted){
-                            animationController.reverse();
-                          }
-                          else{
-                            animationController.forward();
-                          }
-                      },
+              children: [
+                Positioned(
+                bottom: 100,
+                  right: 5,
+                  child: Transform.translate(
+                    offset: Offset.fromDirection(getRadians(90),degOneTranslationAnimation.value * 100),
+                    child: Transform.scale(
+                      scale: degOneTranslationAnimationScale.value,
+                      child: circularButton(
+                        width: 50,
+                        height: 50,
+                        icon: Icon(Icons.mail,color: Colors.white),
+                        color: Colors.blue,
+                        onClick: (){
+                          animationController.reverse();
+                          return showDialog(context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context){
+                              return AlertDialog(
+                                title: Text("Mail"),
+                              ) ;
+                            });},
                       ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 70,
+                  right: 75,
+                  child: Transform.translate(
+                    offset: Offset.fromDirection(getRadians(45),degOneTranslationAnimation.value * 100),
+                    child: Transform.scale(
+                      scale: degOneTranslationAnimationScale.value,
+                      child: circularButton(
+                        width: 50,
+                        height: 50,
+                        icon: Icon(Icons.perm_identity,color: Colors.white),
+                        color: Colors.green,
+                        onClick: (){
+                          animationController.reverse();
+                          return showDialog(context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context){
+                                return AlertDialog(
+                                  title: Text("Name"),
+                                ) ;
+                              });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+            Positioned(
+              bottom: 0,
+              right: 105,
+              child: Transform.translate(
+                offset: Offset.fromDirection(getRadians(0),degOneTranslationAnimation.value * 100),
+
+                child: Transform.scale(
+                  scale: degOneTranslationAnimationScale.value,
+                      child: circularButton(
+                        width: 50,
+                        height: 50,
+                        icon: Icon(Icons.verified_user,color: Colors.white),
+                        color: Colors.orangeAccent,
+                        onClick: (){
+                          animationController.reverse();
+                          return showDialog(context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context){
+                           return AlertDialog(
+                             title: Text("Verify"),
+                           ) ;
+                          });
+
+                        },
+                      ),
+                    ),
+                  ),
+            ),
+
+
+                   Positioned(
+                     bottom: 0,
+                     right: 0,
+                     child: Transform.scale(
+                       scale: mainButtonCliclTranslationAnimation.value,
+                       child: circularButton(
+                          width: 60,
+                          height: 60,
+                          icon: Icon(Icons.list,color: Colors.white),
+                          color: Colors.deepPurple,
+                        onClick: (){
+                            if (animationController.isCompleted){
+                              animationController.reverse();
+                            }
+                            else{
+                              animationController.forward();
+                            }
+                        },
+                        ),
+                     ),
                    ),
 
 
