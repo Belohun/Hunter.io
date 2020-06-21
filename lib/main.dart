@@ -2,24 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:hunterio/RandomWords.dart';
 import 'package:hunterio/circularButton.dart';
+import 'package:hunterio/colorTheme.dart';
+import 'package:provider/provider.dart';
+
 void main() {
   runApp(MyApp());
 }
+class MaterialAppWithTheme extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
+
+    return MaterialApp(
+      home: MyHomePage(title: appTitle),
+      theme: theme.getTheme(),
+    );
+  }
+}
+
 String appTitle = "Hunter.io";
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
 
-      title: appTitle,
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: appTitle),
-    );
+  return ChangeNotifierProvider<ThemeChanger>(
+    builder: (_) => ThemeChanger(ThemeData.light()),
+    child: new MaterialAppWithTheme(),
+  );
   }
 }
 
@@ -37,6 +47,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   final _biggerFont = const TextStyle(fontSize: 18.0);
   AnimationController animationController,animationControllerSmallerFab;
   Animation degOneTranslationAnimation,mainButtonCliclTranslationAnimation,degOneTranslationAnimationScale,smallButtonCliclTranslationAnimation;
+
+bool mode = false;
 
   double getRadians (double degree){
     return degree/57.295779513;
@@ -72,25 +84,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       super.initState();
     }
 
- /* int _counter = 0;
-  var wordPair = WordPair.random();
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-  void _randomWord() {
-    setState(() {
-      wordPair= WordPair.random();
-    });
-  }*/
   void _pushSaved() {
+    ThemeChanger _themeChanger = Provider.of<ThemeChanger>(context);
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -111,9 +106,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           )
               .toList();*/
 
+
           return Scaffold(
             appBar: AppBar(
               title: Text('Options'),
+              /*backgroundColor: colorTheme().primaryColor*/
             ),
             body:  Center(
               child: ListView(/*children: divided*/
@@ -127,10 +124,29 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         children: <Widget>[
                           Text("Night mode", style: _biggerFont,),
                           Switch(
-                            value: false,
-                            onChanged: (bool state){
 
-                              print(state);
+                            value: mode,
+                            onChanged: (bool state){
+                              setState(() {
+                                switch(state){
+                                  case false:{
+                                    _themeChanger.setTheme(ThemeData.light());
+                                  }
+                                  break;
+                                  case true:{
+                                    _themeChanger.setTheme(ThemeData.dark());
+                                  }
+                                  break;
+
+                                }
+
+
+
+                                mode=state;
+                                print(mode);
+                              });
+
+
                             },
                           )
                         ],
@@ -149,7 +165,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           child: TextField(
                             decoration: InputDecoration(
 
-                                hintText: 'Enter your Api key'
+                                hintText: 'Enter your '
+                                    ' key'
                             ),
                           ),
                         ),
@@ -176,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     // than having to individually change instances of widgets.
     return Scaffold(
         appBar: AppBar(
+     /*     backgroundColor: colorTheme().primaryColor,*/
           title: Text('Hunter.io'),
           actions: <Widget>[      // Add 3 lines from here...
             IconButton(icon: Icon(Icons.settings), onPressed: _pushSaved),
@@ -187,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             children: <Widget>[
               DrawerHeader(
                   decoration:BoxDecoration(
-                    gradient: LinearGradient(colors: <Color>[Colors.orangeAccent,Colors.deepOrange])
+                    gradient: LinearGradient(colors: <Color>[colorTheme().primaryColorAccent,colorTheme().primaryColor])
                   )
                   ,child: Center(
                     child: Container(
@@ -206,9 +224,9 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                          ),
                     ),
                   )),
-              customListTile(Icons.mail_outline,"Mails",Colors.blue),
-              customListTile(Icons.perm_identity,"Domains",Colors.green),
-              customListTile(Icons.verified_user,"Verified mails",Colors.orangeAccent)
+              customListTile(Icons.mail_outline,"Mails",colorTheme().mailColor),
+              customListTile(Icons.perm_identity,"Domains",colorTheme().domainColor),
+              customListTile(Icons.verified_user,"Verified mails",colorTheme().verifieduserColor)
             ],
           ),
         ),
@@ -273,6 +291,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                               barrierDismissible: true,
                               builder: (BuildContext context){
                                 return AlertDialog(
+
                                   title: Text("Name"),
                                 ) ;
                               });
@@ -296,11 +315,41 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         color: Colors.orangeAccent,
                         onClick: (){
                           animationController.reverse();
-                          return showDialog(context: context,
+                          return showDialog(
+                              context: context,
                           barrierDismissible: true,
                           builder: (BuildContext context){
                            return AlertDialog(
-                             title: Text("Verify"),
+                             content: SingleChildScrollView(
+                               child: TextField(
+                                 decoration: InputDecoration(
+                                     border: OutlineInputBorder(),
+                                     hintText: "Email"
+                                 ),
+                               ),
+                             ),
+                             actions: <Widget>[
+                               FlatButton(
+                                 child: Text('Cancel'),
+                                 onPressed: () {
+                                   Navigator.of(context).pop();
+                                 },
+                               ),
+                               FlatButton(
+                                 color: Colors.blue,
+                                 textColor: Colors.white,
+                                 disabledColor: Colors.grey,
+                                 disabledTextColor: Colors.black,
+                                 padding: EdgeInsets.all(8.0),
+                                /* splashColor: Colors.blueAccent,*/
+                                  child: Text('Verify'),
+                                  onPressed: () {
+                            Navigator.of(context).pop();
+                                  },
+                               ),
+
+                             ],
+                             title: Text("Verify e-mail"),
                            ) ;
                           });
 
