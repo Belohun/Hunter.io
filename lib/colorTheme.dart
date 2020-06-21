@@ -4,6 +4,8 @@ import 'package:hunterio/RandomWords.dart';
 import 'package:hunterio/circularButton.dart';
 class colorTheme{
   Color primaryColor = Colors.deepOrange;
+  Color primaryColorDark = Colors.black26;
+  Color primaryColorDarkAccent = Colors.black12;
   Color primaryColorAccent = Colors.orangeAccent;
   Color mailColor = Colors.blue;
   Color domainColor = Colors.green;

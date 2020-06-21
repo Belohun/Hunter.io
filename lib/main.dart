@@ -4,7 +4,39 @@ import 'package:hunterio/RandomWords.dart';
 import 'package:hunterio/circularButton.dart';
 import 'package:hunterio/colorTheme.dart';
 import 'package:provider/provider.dart';
+String appTitle = "Hunter.io";
+bool mode = false;
 
+getAppBarColor(){
+  Color AppBarColor;
+  switch(mode){
+    case false:{
+      AppBarColor = colorTheme().primaryColor;
+    }
+    break;
+    case true:{
+      AppBarColor = colorTheme().primaryColorDark;
+    }
+    break;
+  }
+  return AppBarColor;
+
+}
+getAppBarColorAccent(){
+  Color AppBarColor;
+  switch(mode){
+    case false:{
+      AppBarColor = colorTheme().primaryColorAccent;
+    }
+    break;
+    case true:{
+      AppBarColor = colorTheme().primaryColorDarkAccent;
+    }
+    break;
+  }
+  return AppBarColor;
+
+}
 void main() {
   runApp(MyApp());
 }
@@ -20,7 +52,7 @@ class MaterialAppWithTheme extends StatelessWidget {
   }
 }
 
-String appTitle = "Hunter.io";
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -48,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   AnimationController animationController,animationControllerSmallerFab;
   Animation degOneTranslationAnimation,mainButtonCliclTranslationAnimation,degOneTranslationAnimationScale,smallButtonCliclTranslationAnimation;
 
-bool mode = false;
+
 
   double getRadians (double degree){
     return degree/57.295779513;
@@ -109,6 +141,7 @@ bool mode = false;
 
           return Scaffold(
             appBar: AppBar(
+              backgroundColor: getAppBarColor(),
               title: Text('Options'),
               /*backgroundColor: colorTheme().primaryColor*/
             ),
@@ -193,7 +226,7 @@ bool mode = false;
     // than having to individually change instances of widgets.
     return Scaffold(
         appBar: AppBar(
-     /*     backgroundColor: colorTheme().primaryColor,*/
+          backgroundColor: getAppBarColor(),
           title: Text('Hunter.io'),
           actions: <Widget>[      // Add 3 lines from here...
             IconButton(icon: Icon(Icons.settings), onPressed: _pushSaved),
@@ -205,7 +238,7 @@ bool mode = false;
             children: <Widget>[
               DrawerHeader(
                   decoration:BoxDecoration(
-                    gradient: LinearGradient(colors: <Color>[colorTheme().primaryColorAccent,colorTheme().primaryColor])
+                    gradient: LinearGradient(colors: <Color>[getAppBarColorAccent(),getAppBarColor()])
                   )
                   ,child: Center(
                     child: Container(
