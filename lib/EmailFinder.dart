@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 
-class randomWords extends StatelessWidget {
+class emailFinder extends StatelessWidget {
   // #docregion build
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Startup Name Generator',
-      home: RandomWords(),
+      home: EmailFinder(),
     );
   }
 // #enddocregion build
@@ -18,7 +18,7 @@ class randomWords extends StatelessWidget {
 // #enddocregion MyApp
 
 // #docregion RWS-var
-class RandomWordsState extends State<RandomWords> {
+class EmailFinderState extends State<EmailFinder> {
 
   final _suggestions = <WordPair>[];
   final Set<WordPair> _saved = <WordPair>{};
@@ -47,11 +47,19 @@ class RandomWordsState extends State<RandomWords> {
     final alreadySaved = _saved.contains(pair);
     return ListTile(
       title: Text(
-        pair.asPascalCase,
+        pair.asPascalCase + "@email.com",
         style: _biggerFont,
       ),
       leading: CircleAvatar(child: Text(pair.first[0].toUpperCase(),style: TextStyle(color: Colors.white),),backgroundColor: Colors.blueGrey,)
       ,
+      subtitle: Row(
+        children: <Widget>[
+          Text("Score:",style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(" 99"),
+          Text(" Position:",style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(" 1")
+        ],
+      ),
       trailing: Icon(
         alreadySaved ? Icons.star : Icons.star_border,
         color: alreadySaved ? Colors.yellow : null,
@@ -83,7 +91,7 @@ class RandomWordsState extends State<RandomWords> {
 }
 // #enddocregion RWS-var
 
-class RandomWords extends StatefulWidget {
+class EmailFinder extends StatefulWidget {
   @override
-  RandomWordsState createState() => RandomWordsState();
+  EmailFinderState createState() => EmailFinderState();
 }

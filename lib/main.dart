@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:hunterio/RandomWords.dart';
+import 'package:hunterio/EmailFinder.dart';
 import 'package:hunterio/circularButton.dart';
 import 'package:hunterio/colorTheme.dart';
 import 'package:provider/provider.dart';
@@ -36,10 +36,27 @@ getAppBarColorAccent(){
   }
   return AppBarColor;
 
+
+}
+Widget AppBody;
+setAppBody(Widget Body){
+  AppBody = Body;
+}
+
+getAppBody(){
+  return AppBody;
 }
 void main() {
   runApp(MyApp());
 }
+String ApiKey;
+getApiKey(){
+  return ApiKey;
+}
+setApiKey(String Key){
+  ApiKey=Key;
+}
+
 class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -62,6 +79,7 @@ class MyApp extends StatelessWidget {
     builder: (_) => ThemeChanger(ThemeData.light()),
     child: new MaterialAppWithTheme(),
   );
+
   }
 }
 
@@ -196,10 +214,12 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                           width: 250,
                           child: TextField(
+                            controller: TextEditingController(text: getApiKey()),
+                            onChanged: (text){
+                               setApiKey(text);
+                            },
                             decoration: InputDecoration(
-
-                                hintText: 'Enter your '
-                                    ' key'
+                                hintText: "Enter your Api Key"
                             ),
                           ),
                         ),
@@ -217,6 +237,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
   @override
   Widget build(BuildContext context) {
+/*    MainBody _bodyChanger = Provider.of<MainBody>(context);*/
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -230,7 +251,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           title: Text('Hunter.io'),
           actions: <Widget>[      // Add 3 lines from here...
             IconButton(icon: Icon(Icons.settings), onPressed: _pushSaved),
-
           ],                      // ... to here.
         ),
         drawer: Drawer(
@@ -257,15 +277,22 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                          ),
                     ),
                   )),
-              customListTile(Icons.mail_outline,"Mails",colorTheme().mailColor),
-              customListTile(Icons.perm_identity,"Domains",colorTheme().domainColor),
-              customListTile(Icons.verified_user,"Verified mails",colorTheme().verifieduserColor)
+              customListTile(Icons.search,"Searched Domains",colorTheme().mailColor,(){setState(() {
+                Navigator.of(context).pop();
+              });}),
+              customListTile(Icons.perm_identity,"E-mails",colorTheme().domainColor,(){setState(() {
+                Navigator.of(context).pop();
+              });}),
+              customListTile(Icons.verified_user,"Verified mails",colorTheme().verifieduserColor,(){setState(() {
+                setAppBody(EmailFinder());
+                Navigator.of(context).pop();
+              });})
             ],
           ),
         ),
 
         body: Center(
-        child:RandomWords()
+        child:getAppBody()
 
       ),
       floatingActionButton: Stack(
@@ -282,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             child: Stack(
               children: [
                 Positioned(
-                bottom: 100,
+                bottom: 105,
                   right: 5,
                   child: Transform.translate(
                     offset: Offset.fromDirection(getRadians(90),degOneTranslationAnimation.value * 100),
@@ -291,7 +318,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                       child: circularButton(
                         width: 50,
                         height: 50,
-                        icon: Icon(Icons.mail,color: Colors.white),
+                        icon: Icon(Icons.search,color: Colors.white),
                         color: Colors.blue,
                         onClick: (){
                           animationController.reverse();
@@ -299,7 +326,41 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                             barrierDismissible: true,
                             builder: (BuildContext context){
                               return AlertDialog(
-                                title: Text("Mail"),
+                                content: SingleChildScrollView(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: "company.com"
+                                    ),
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  FlatButton(
+                                    color: Colors.blue,
+                                    textColor: Colors.white,
+                                    disabledColor: Colors.grey,
+                                    disabledTextColor: Colors.black,
+                                    padding: EdgeInsets.all(8.0),
+                                    /* splashColor: Colors.blueAccent,*/
+                                    child: Text('Find email adress'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+
+                                ],
+                                title: Container(child: Row(
+                                  children: <Widget>[
+                                    Icon(Icons.search,color: Colors.blue),
+                                    Text("Domain search"),
+                                  ],
+                                )),
                               ) ;
                             });},
                       ),
@@ -324,8 +385,41 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                               barrierDismissible: true,
                               builder: (BuildContext context){
                                 return AlertDialog(
+                                  content: SingleChildScrollView(
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          hintText: "JohnDoe@company.com"
+                                      ),
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      color: Colors.blue,
+                                      textColor: Colors.white,
+                                      disabledColor: Colors.grey,
+                                      disabledTextColor: Colors.black,
+                                      padding: EdgeInsets.all(8.0),
+                                      /* splashColor: Colors.blueAccent,*/
+                                      child: Text('Search'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
 
-                                  title: Text("Name"),
+                                  ],
+                                  title: Container(child: Row(
+                                    children: <Widget>[
+                                      Icon(Icons.perm_identity,color: Colors.green),
+                                      Text(" Email Finder"),
+                                    ],
+                                  )),
                                 ) ;
                               });
                         },
@@ -357,7 +451,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                child: TextField(
                                  decoration: InputDecoration(
                                      border: OutlineInputBorder(),
-                                     hintText: "Email"
+                                     hintText: "johndoe@company.com"
                                  ),
                                ),
                              ),
@@ -382,7 +476,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                ),
 
                              ],
-                             title: Text("Verify e-mail"),
+                             title: Container(child: Row(
+                               children: <Widget>[
+                                 Icon(Icons.verified_user,color: Colors.orangeAccent),
+                                 Text(" Email Verifier")
+
+                               ],
+                             )),
                            ) ;
                           });
 
@@ -430,8 +530,9 @@ class customListTile extends StatelessWidget{
   String text;
   final iconColor;
   final icon;
+  final Function onClick;
 
-  customListTile(this.icon,this.text,this.iconColor);
+  customListTile(this.icon,this.text,this.iconColor,this.onClick);
   @override
   Widget build(BuildContext context) {
 
@@ -443,8 +544,8 @@ class customListTile extends StatelessWidget{
         child: Container(
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade400))),
           child: InkWell(
-            splashColor: Colors.orangeAccent,
-            onTap: (){},
+            /*splashColor: Colors.orangeAccent,*/
+            onTap: onClick,
             child: Container(
               height: 40,
               child: Row(
@@ -465,4 +566,16 @@ class customListTile extends StatelessWidget{
     );
   }
 
+}
+class MainBody with ChangeNotifier {
+  MainBody _mainBody;
+
+  MainBody(this._mainBody);
+
+  getBody() => _mainBody;
+  setBody(MainBody body) {
+    _mainBody = body;
+
+    notifyListeners();
+  }
 }

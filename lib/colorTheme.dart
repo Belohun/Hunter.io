@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:hunterio/RandomWords.dart';
+import 'package:hunterio/EmailFinder.dart';
 import 'package:hunterio/circularButton.dart';
 class colorTheme{
   Color primaryColor = Colors.deepOrange;
