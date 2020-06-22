@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:hunterio/DomainSearch.dart';
 import 'package:hunterio/EmailVerification.dart';
 import 'package:hunterio/EmailVerificationSaved.dart';
 import 'package:hunterio/circularButton.dart';
@@ -65,7 +66,14 @@ getEmail(){
 setEmail(String mail){
   InputEmail= mail;
 }
+String InputDomain;
+getDomain(){
+  return InputDomain;
+}
+setDomain(String domain){
+  InputDomain= domain;
 
+}
 class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -185,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         children: <Widget>[
                           Text("Night mode", style: _biggerFont,),
                           Switch(
-
                             value: mode,
                             onChanged: (bool state){
                               setState(() {
@@ -200,6 +207,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                   break;
 
                                 }
+                                mode=state;
 
                               });
 
@@ -337,6 +345,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                               return AlertDialog(
                                 content: SingleChildScrollView(
                                   child: TextField(
+                                    controller: myController,
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(),
                                         hintText: "company.com"
@@ -359,7 +368,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                     /* splashColor: Colors.blueAccent,*/
                                     child: Text('Find email adress'),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        setEmail(myController.text);
+                                        setAppBody(DomainSearchLayout());
+                                        Navigator.pop(context);
+                                      });
                                     },
                                   ),
 
@@ -396,6 +409,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                 return AlertDialog(
                                   content: SingleChildScrollView(
                                     child: TextField(
+                                      controller: myController,
                                       decoration: InputDecoration(
                                           border: OutlineInputBorder(),
                                           hintText: "JohnDoe@company.com"
@@ -418,7 +432,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                       /* splashColor: Colors.blueAccent,*/
                                       child: Text('Search'),
                                       onPressed: () {
-                                        Navigator.of(context).pop();
+
                                       },
                                     ),
 

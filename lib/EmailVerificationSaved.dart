@@ -2,50 +2,37 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
-import 'package:hunterio/email_verification_api_call.dart';
-
 class emailVerificationSaved extends StatelessWidget {
-  // #docregion build
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: EmailVerificationSaved(),
     );
   }
-// #enddocregion build
+
 }
-// #enddocregion MyApp
 
-// #docregion RWS-var
+
 class EmailVerificationSavedState extends State<EmailVerificationSaved> {
-
   final _suggestions = <WordPair>[];
   final Set<WordPair> _saved = <WordPair>{};
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
-  // #enddocregion RWS-var
-
-  // #docregion _buildSuggestions
   Widget _buildSuggestions() {
+    _suggestions.add(WordPair("First", "Word"));
+    _suggestions.add(WordPair("Second", "Word"));
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: /*1*/ (context, i) {
-          if (i.isOdd) return Divider(); /*2*/
 
-          final index = i ~/ 2; /*3*/
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10)); /*4*/
-          }
+          final index = i;
           return _buildRow(_suggestions[index]);
-        });
+        },itemCount: _suggestions.length,);
   }
-  // #enddocregion _buildSuggestions
-
-  // #docregion _buildRow
   Widget _buildRow(WordPair pair) {
     final alreadySaved = _saved.contains(pair);
     return ListTile(
+
       title: Text(
         pair.asPascalCase + "@email.com",
         style: _biggerFont,
