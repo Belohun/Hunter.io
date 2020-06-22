@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:hunterio/EmailFinder.dart';
+import 'package:hunterio/EmailVerification.dart';
+import 'package:hunterio/EmailVerificationSaved.dart';
 import 'package:hunterio/circularButton.dart';
 import 'package:hunterio/colorTheme.dart';
 import 'package:provider/provider.dart';
@@ -49,12 +50,20 @@ getAppBody(){
 void main() {
   runApp(MyApp());
 }
-String ApiKey;
+String ApiKey="30f061a1f89d6e8b8909616fed52c14a3f2709a7";
 getApiKey(){
   return ApiKey;
 }
 setApiKey(String Key){
   ApiKey=Key;
+}
+String InputEmail;
+getEmail(){
+  return InputEmail;
+
+}
+setEmail(String mail){
+  InputEmail= mail;
 }
 
 class MaterialAppWithTheme extends StatelessWidget {
@@ -94,6 +103,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+  final myController = TextEditingController();
   final _biggerFont = const TextStyle(fontSize: 18.0);
   AnimationController animationController,animationControllerSmallerFab;
   Animation degOneTranslationAnimation,mainButtonCliclTranslationAnimation,degOneTranslationAnimationScale,smallButtonCliclTranslationAnimation;
@@ -191,10 +201,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
                                 }
 
-
-
-                                mode=state;
-                                print(mode);
                               });
 
 
@@ -284,17 +290,20 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 Navigator.of(context).pop();
               });}),
               customListTile(Icons.verified_user,"Verified mails",colorTheme().verifieduserColor,(){setState(() {
-                setAppBody(EmailFinder());
+
+                setAppBody(EmailVerificationSaved());
                 Navigator.of(context).pop();
               });})
             ],
           ),
         ),
 
-        body: Center(
-        child:getAppBody()
-
-      ),
+        body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          child: getAppBody(),
+        )
+    ,
       floatingActionButton: Stack(
         children: <Widget>[
 
@@ -449,6 +458,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                            return AlertDialog(
                              content: SingleChildScrollView(
                                child: TextField(
+                                 controller: myController,
                                  decoration: InputDecoration(
                                      border: OutlineInputBorder(),
                                      hintText: "johndoe@company.com"
@@ -459,6 +469,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                FlatButton(
                                  child: Text('Cancel'),
                                  onPressed: () {
+
                                    Navigator.of(context).pop();
                                  },
                                ),
@@ -470,8 +481,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                  padding: EdgeInsets.all(8.0),
                                 /* splashColor: Colors.blueAccent,*/
                                   child: Text('Verify'),
-                                  onPressed: () {
-                            Navigator.of(context).pop();
+                                  onPressed: () {setState(() {
+                                    setEmail(myController.text);
+                                    setAppBody(EmailVerificationLayout());
+                                    Navigator.pop(context);
+                                  });
+
+
                                   },
                                ),
 
@@ -567,15 +583,4 @@ class customListTile extends StatelessWidget{
   }
 
 }
-class MainBody with ChangeNotifier {
-  MainBody _mainBody;
 
-  MainBody(this._mainBody);
-
-  getBody() => _mainBody;
-  setBody(MainBody body) {
-    _mainBody = body;
-
-    notifyListeners();
-  }
-}

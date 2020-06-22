@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:hunterio/email_verification_api_call.dart';
 
-class emailFinder extends StatelessWidget {
+class emailVerificationSaved extends StatelessWidget {
   // #docregion build
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
-      home: EmailFinder(),
+      home: EmailVerificationSaved(),
     );
   }
 // #enddocregion build
@@ -18,7 +18,7 @@ class emailFinder extends StatelessWidget {
 // #enddocregion MyApp
 
 // #docregion RWS-var
-class EmailFinderState extends State<EmailFinder> {
+class EmailVerificationSavedState extends State<EmailVerificationSaved> {
 
   final _suggestions = <WordPair>[];
   final Set<WordPair> _saved = <WordPair>{};
@@ -91,7 +91,8 @@ class EmailFinderState extends State<EmailFinder> {
 }
 // #enddocregion RWS-var
 
-class EmailFinder extends StatefulWidget {
+class EmailVerificationSaved extends StatefulWidget {
+
   @override
-  EmailFinderState createState() => EmailFinderState();
+  EmailVerificationSavedState createState() => EmailVerificationSavedState();
 }
