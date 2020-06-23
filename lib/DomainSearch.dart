@@ -125,7 +125,10 @@ domainRow(this.mail);
         ],
       ),
       isThreeLine: true,
-      trailing:Text(mail.position==null ?"": mail.position),
+      trailing:Icon(
+        alreadySaved ? Icons.star : Icons.star_border,
+        color: alreadySaved ? Colors.yellow : null,
+      ),
       onTap: () {
         Navigator.of(context).push(
         MaterialPageRoute<void>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:hunterio/DomainSearch.dart';
+import 'package:hunterio/EmailFInder.dart';
 import 'package:hunterio/EmailVerification.dart';
 import 'package:hunterio/EmailVerificationSaved.dart';
 import 'package:hunterio/circularButton.dart';
@@ -407,19 +408,57 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                               barrierDismissible: true,
                               builder: (BuildContext context){
                                 return AlertDialog(
-                                  content: SingleChildScrollView(
-                                    child: TextField(
-                                      controller: myController,
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          hintText: "JohnDoe@company.com"
-                                      ),
+                                  content: Container(
+                                    height: 150,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex:1,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(bottom: 8),
+                                            child: TextField(
+                                              controller: myController,
+                                              decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: "First name"
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex:1,
+                                          child: Padding(
+                                              padding: EdgeInsets.only(bottom: 8),
+                                            child: TextField(
+                                              controller: myController,
+                                              decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: "Last name"
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex:1,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(bottom: 8),
+                                            child: TextField(
+                                              controller: myController,
+                                              decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  labelText: "Domain"
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
                                   actions: <Widget>[
                                     FlatButton(
                                       child: Text('Cancel'),
                                       onPressed: () {
+
                                         Navigator.of(context).pop();
                                       },
                                     ),
@@ -432,6 +471,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                       /* splashColor: Colors.blueAccent,*/
                                       child: Text('Search'),
                                       onPressed: () {
+                                        setState(() {
+                                          setAppBody(EmailFinderLayout());
+                                          Navigator.of(context).pop();
+                                        });
 
                                       },
                                     ),
