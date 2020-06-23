@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hunterio/domain_search_api_call.dart';
 import 'package:hunterio/email_verification_api_call.dart';
 
+import 'local_db.dart';
 import 'main.dart';
 
 
@@ -30,7 +32,6 @@ class EmailVerificationState extends State<EmailVerificationLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final Set<EmailVerificationData> _saved = <EmailVerificationData>{};
     String _Email;
     String _ApiKey;
     setState(() {
@@ -44,7 +45,11 @@ class EmailVerificationState extends State<EmailVerificationLayout> {
        future: futureEmailVerification,
        builder: (context, snapshot) {
          if (snapshot.hasData) {
-           bool alreadySaved = _saved.contains(snapshot.data.data);
+           var dh = DBHelper();
+           dh.init();
+           final ea = EmailAddress(value:snapshot.data.data.email);
+           List _saved=getTempSavedMails();
+           final alreadySaved = _saved.contains(snapshot.data.data.email);
            return ListTile(
              title: Text(snapshot.data.data.email,style: TextStyle(fontSize: 18.0)),
                leading: CircleAvatar(child: Text(snapshot.data.data.email[0].toUpperCase(),style: TextStyle(color: Colors.white),),backgroundColor: Colors.blueGrey,)
@@ -63,10 +68,17 @@ class EmailVerificationState extends State<EmailVerificationLayout> {
              onTap: () {
                //Saving email
                setState(() {
+
                  if(alreadySaved){
-                   _saved.remove(snapshot.data.data);
+                  dh.removeEmailAddress(ea.value);
+                  removeFromTempSavedList(snapshot.data.data.email);
+                 // _saved.removeWhere((item)=> item==snapshot.data.data.email);
+
                  }else{
-                   _saved.add(snapshot.data.data);
+
+                //   _saved.add(snapshot.data.data.email);
+                   dh.addEmailAddress(ea);
+                   addToTempSavedList(snapshot.data.data.email);
 
 
                  }

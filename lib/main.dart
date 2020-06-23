@@ -3,10 +3,12 @@ import 'package:english_words/english_words.dart';
 import 'package:hunterio/DomainSearch.dart';
 import 'package:hunterio/EmailFInder.dart';
 import 'package:hunterio/EmailVerification.dart';
-import 'package:hunterio/EmailVerificationSaved.dart';
+import 'package:hunterio/SavedEmails.dart';
 import 'package:hunterio/circularButton.dart';
 import 'package:hunterio/colorTheme.dart';
 import 'package:provider/provider.dart';
+
+import 'local_db.dart';
 String appTitle = "Hunter.io";
 bool mode = false;
 
@@ -75,6 +77,29 @@ setDomain(String domain){
   InputDomain= domain;
 
 }
+List<EmailAddress> savedMails;
+setSavedMails(List list){
+  savedMails = list;
+
+}
+getSavedMails(){
+  return savedMails;
+}
+List<String> tempSavedMails=[];
+getTempSavedMails(){
+  return tempSavedMails;
+}
+setTempSavedMails(List mails){
+  tempSavedMails=mails;
+}
+removeFromTempSavedList(String mail){
+ tempSavedMails.removeWhere((element) => element==mail);
+
+
+}
+addToTempSavedList(String mail){
+  tempSavedMails.add(mail);
+}
 class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -124,6 +149,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
     @override
     void initState(){
+      var dh = DBHelper();
+      dh.init();
+
+
     animationController= AnimationController(vsync:this,duration: Duration(milliseconds: 250));
     degOneTranslationAnimation = Tween(begin: 1.0, end: 0.0).animate(animationController);
     degOneTranslationAnimationScale= Tween(begin: 0.0, end: 1.0).animate(animationController);
@@ -136,21 +165,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
       });
     });
-    super.initState();
-    }
-    @override
-    void initState2(){
-      animationControllerSmallerFab= AnimationController(vsync:this,duration: Duration(milliseconds: 250));
-      smallButtonCliclTranslationAnimation= TweenSequence([
-        TweenSequenceItem<double>(tween: Tween<double>(begin: 1.0, end: 0.6),weight: 50),
-        TweenSequenceItem<double>(tween: Tween<double>(begin: 0.6, end: 1.0),weight: 50)
-      ]).animate(animationControllerSmallerFab);
-      animationControllerSmallerFab.addListener(() {
-        setState(() {
+    void dbTesting() async {
+      final list = await dh.emails();
+          setState(() {
+            setSavedMails(list);
+            list.forEach((element) {addToTempSavedList(element.value.toString()); });
+          });
 
-        });
-      });
-      super.initState();
+    }
+    dbTesting();
+    super.initState();
+
     }
 
   void _pushSaved() {
@@ -293,15 +318,21 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     ),
                   )),
               customListTile(Icons.search,"Searched Domains",colorTheme().mailColor,(){setState(() {
+                setAppBody(DomainSearchLayout());
                 Navigator.of(context).pop();
               });}),
-              customListTile(Icons.perm_identity,"E-mails",colorTheme().domainColor,(){setState(() {
+              customListTile(Icons.perm_identity,"Found E-mails",colorTheme().domainColor,(){setState(() {
+                setAppBody(EmailFinderLayout());
                 Navigator.of(context).pop();
               });}),
               customListTile(Icons.verified_user,"Verified mails",colorTheme().verifieduserColor,(){setState(() {
 
-                setAppBody(EmailVerificationSaved());
+                setAppBody(EmailVerificationLayout());
                 Navigator.of(context).pop();
+              });}),
+              customListTile(Icons.star,"Saved E-mails",Colors.yellow,(){setState(() {
+                Navigator.of(context).pop();
+                setAppBody(EmailSaved());
               });})
             ],
           ),

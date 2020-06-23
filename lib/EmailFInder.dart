@@ -6,6 +6,7 @@ import 'package:hunterio/domain_search_api_call.dart';
 import 'package:hunterio/email_finder_api_call.dart';
 import 'package:hunterio/email_verification_api_call.dart';
 
+import 'local_db.dart';
 import 'main.dart';
 
 
@@ -45,7 +46,11 @@ class EmailFinderState extends State<EmailFinderLayout> {
         future: futureEmailFinder,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            bool alreadySaved = _saved.contains(snapshot.data);
+            var dh = DBHelper();
+            dh.init();
+            final ea = EmailAddress(value:snapshot.data.email);
+            List _saved=getTempSavedMails();
+            final alreadySaved = _saved.contains(snapshot.data.email);
             return ListTile(
               title: Text(snapshot.data.email,style: TextStyle(fontSize: 18.0)),
               leading: CircleAvatar(child: Text(snapshot.data.email[0].toUpperCase(),style: TextStyle(color: Colors.white),),backgroundColor: Colors.blueGrey,)
@@ -53,7 +58,7 @@ class EmailFinderState extends State<EmailFinderLayout> {
               children: <Widget>[
                 Text("Score: ",style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(snapshot.data.score.toString()),
-                Text(" Result: ",style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(" Positon: ",style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(snapshot.data.position)
               ],
             ),
@@ -65,9 +70,11 @@ class EmailFinderState extends State<EmailFinderLayout> {
                 //Saving email
                 setState(() {
                   if(alreadySaved){
-                    _saved.remove(snapshot.data);
+                    dh.removeEmailAddress(ea.value);
+                    removeFromTempSavedList(snapshot.data.email);
                   }else{
-                    _saved.add(snapshot.data);
+                    dh.addEmailAddress(ea);
+                    addToTempSavedList(snapshot.data.email);
 
 
                   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:hunterio/EmailVerificationSaved.dart';
+import 'package:hunterio/SavedEmails.dart';
 import 'package:hunterio/circularButton.dart';
 class colorTheme{
   Color primaryColor = Colors.deepOrange;

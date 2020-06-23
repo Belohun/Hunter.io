@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hunterio/domain_search_api_call.dart';
 import 'package:provider/provider.dart';
+import 'local_db.dart';
 import 'main.dart';
 
 //stripe.com
-final Set<Email> _savedMails = <Email>{};
+
 class domainSearch extends StatelessWidget {
   // #docregion build
   @override
@@ -19,6 +20,7 @@ class domainSearch extends StatelessWidget {
 // #enddocregion build
 }
 
+
 class DomainSearchState extends State<DomainSearchLayout> {
 
   Future<List<Email>> futureEmails;
@@ -29,49 +31,65 @@ class DomainSearchState extends State<DomainSearchLayout> {
     String _Email;
     String _ApiKey;
 
+
     setState(() {
       _Email = getEmail();
       _ApiKey = getApiKey();
       futureEmails = fetchEmails(
           "stripe.com" ,  _ApiKey);
     });
-
     return Scaffold(
       body: FutureBuilder<List<Email>>(
         future: futureEmails,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            final alreadySaved = true;
             final list = snapshot.data;
            return ListView.builder(
              padding: const EdgeInsets.all(16.0),
                itemBuilder: (context, i) {
-                 return Dismissible(
-                     key: Key(list[i].value),
-                     background: Container(
-                       height: 30,
-                       alignment: AlignmentDirectional.centerStart,
-                       padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                       color: Colors.redAccent,
-                       child: Icon(Icons.delete),
-                     ),
-                     direction: DismissDirection.startToEnd,
-                     dismissThresholds:{
-                       DismissDirection.startToEnd: 0.5
-                 },
-                     onDismissed: (direction) {
-                     /*  setState(() {
-                         list.removeAt(i);
-                       });*/
+                 var dh = DBHelper();
+                 dh.init();
+                 final ea = EmailAddress(value:snapshot.data[i].value);
+                 List _saved=getTempSavedMails();
+                 final alreadySaved = _saved.contains(snapshot.data[i].value);
+                 return  Row(
+                   children: <Widget>[
+                 Expanded(
+                     flex: 1,
+                     child: domainRow(list[i])),
+                     Center(
+                       child: GestureDetector(
+                         onTap: (){
+                           setState(() {
 
-                       Scaffold.of(context).showSnackBar(
-                         SnackBar(
-                           content: Text("Item removed"),
+                             if(alreadySaved){
+                               dh.removeEmailAddress(ea.value);
+                               removeFromTempSavedList(snapshot.data[i].value);
+                               // _saved.removeWhere((item)=> item==snapshot.data.data.email);
+
+                             }else{
+
+                               //   _saved.add(snapshot.data.data.email);
+                               dh.addEmailAddress(ea);
+                               addToTempSavedList(snapshot.data[i].value);
+
+
+                             }
+                           });
+
+                         },
+                         child: Expanded(
+                           flex: 3,
+                           child: Center(
+                             child: Icon(alreadySaved ? Icons.star : Icons.star_border,
+                               color: alreadySaved ? Colors.yellow : null,),
+                           ),
                          ),
-                       );
-                     },
-
-
-                     child: domainRow(list[i]));
+                       ),
+                     )
+                   ],
+                 );
                },itemCount: list.length,);
 
           } else if (snapshot.hasError) {
@@ -109,7 +127,7 @@ final _biggerFont = const TextStyle(fontSize: 18.0);
 domainRow(this.mail);
   @override
   Widget build(BuildContext context) {
-    final alreadySaved = _savedMails.contains(mail);
+
     return ListTile(
       title: Text(
         mail.firstName+" "+mail.lastName,
@@ -117,6 +135,7 @@ domainRow(this.mail);
       ),
       leading: CircleAvatar(child: Text(mail.firstName[0].toUpperCase(),style: TextStyle(color: Colors.white),),backgroundColor: Colors.blueGrey,)
       ,
+
       subtitle: Row(
         children: <Widget>[
           Text("Email: ",style: TextStyle(fontWeight: FontWeight.bold)),
@@ -125,10 +144,6 @@ domainRow(this.mail);
         ],
       ),
       isThreeLine: true,
-      trailing:Icon(
-        alreadySaved ? Icons.star : Icons.star_border,
-        color: alreadySaved ? Colors.yellow : null,
-      ),
       onTap: () {
         Navigator.of(context).push(
         MaterialPageRoute<void>(
